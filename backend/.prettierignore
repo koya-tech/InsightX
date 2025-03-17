@@ -1,0 +1,17 @@
+build
+coverage
+
+*.md
+
+*.html
+
+.*
+
+**/.git
+**/.svn
+**/.hg
+**/node_modules
+**/dist
+
+# package.json
+# package-lock.json
