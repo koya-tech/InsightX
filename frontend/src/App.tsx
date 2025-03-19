@@ -1,3 +1,4 @@
+import { Button } from "./components/ui/button";
 import { supabase } from "./utils/supabaseClient";
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
                 >
                     Sign in with Google
                 </button>
+                <Button>Button</Button>
             </div>
         </>
     );
