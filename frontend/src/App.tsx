@@ -1,30 +1,26 @@
-import { Button } from "./components/ui/button";
-import { supabase } from "./utils/supabaseClient";
+import { lazy, Suspense } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Header } from "./components/Header";
+import { Footer } from "./components/Footer";
+import Dashboard from "./components/Dashboard";
+import Home from "./components/Home";
+import LoadingSpinner from "./components/Loading";
+
+const NotFound = lazy(() => import("./components/NotFound"));
 
 function App() {
-    const handleGoogleSignIn = async () => {
-        const { error } = await supabase.auth.signInWithOAuth({
-            provider: "google",
-        });
-        if (error) {
-            console.error("Sign in error:", error.message);
-        }
-    };
-
     return (
-        <>
-            <p className="bg-amber-300">Hello world</p>
-            <div className="flex flex-col items-center justify-center h-screen">
-                <p className="bg-amber-300 p-4">Hello world</p>
-                <button
-                    onClick={handleGoogleSignIn}
-                    className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                >
-                    Sign in with Google
-                </button>
-                <Button>Button</Button>
-            </div>
-        </>
+        <BrowserRouter>
+            <Suspense fallback={<LoadingSpinner />}>
+                <Header />
+                <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="*" element={<NotFound />} />
+                </Routes>
+                <Footer />
+            </Suspense>
+        </BrowserRouter>
     );
 }
 
