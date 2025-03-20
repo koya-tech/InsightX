@@ -1,7 +1,6 @@
 const EcoFutLandingPage = () => {
     return (
         <div className="min-h-screen bg-gray-50 text-gray-600 font-sans mt-16">
-
             <section className="relative w-full h-64 md:h-[76vh] overflow-hidden">
                 {/* Background Image */}
                 <div
@@ -32,8 +31,7 @@ const EcoFutLandingPage = () => {
                 <div className="container mx-auto px-4 md:px-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-20">
                         <img
-                            src="https://img.freepik.com/free-photo/full-shot-student-library_23-2149647115.jpg?t=st=1742406830~exp=1742410430~hmac=26af67c970ef5d677c21688c184d6de0fdd9052f253c214ced76b9264c87bffc&w=1380"
-                            // https://img.freepik.com/free-photo/close-up-young-colleagues-having-meeting_23-2149060255.jpg?t=st=1742407112~exp=1742410712~hmac=0cc0e733a7c278050da6063927d49110a3e7527b04a0076e6e301d7def5c87cb&w=1380
+                            src="/ecohub7.jpg"
                             alt="Team illustration"
                             className="mx-auto h-full rounded-4xl shadow-2xl"
                         />

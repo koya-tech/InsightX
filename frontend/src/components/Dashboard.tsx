@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, User, MessageSquare } from "lucide-react";
+import { Search, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ChatBox } from "./ChatBox";
@@ -18,7 +18,7 @@ export default function Dashboard() {
     return (
         <div className="flex h-screen pt-16">
             {/* Sidebar */}
-            <div className="w-64 bg-gray-800 text-white p-4 flex flex-col space-y-4">
+            <div className="w-64 bg-tertiary-green text-white p-4 flex flex-col space-y-4">
                 <Button
                     variant={activeTab === "search" ? "secondary" : "ghost"}
                     className="flex items-center space-x-2"
@@ -35,7 +35,6 @@ export default function Dashboard() {
                     className="flex items-center space-x-2"
                     onClick={() => setActiveTab("profile")}
                 >
-                    <User size={20} />
                     <span>Profile</span>
                 </Button>
             </div>
