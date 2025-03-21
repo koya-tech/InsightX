@@ -19,19 +19,11 @@ export class CustomLoggerService implements LoggerService {
                 }),
             ),
             transports: [
-                // new winston.transports.Console(),
-                new winston.transports.DailyRotateFile({
-                    // depend on size
+                new winston.transports.File({
                     filename: 'logs/application.log',
-                    maxSize: '5m',
-                    maxFiles: '3',
-
-                    // depend on date
-                    // filename: 'logs/application-%DATE%.log',
-                    // datePattern: 'YYYY-MM-DD',
-                    // maxFiles: '7d',
-
-                    zippedArchive: true,
+                    maxsize: 5 * 1024 * 1024, // 5MB
+                    maxFiles: 3,
+                    tailable: true, // 最新のログを application.log に維持
                 }),
             ],
         });
