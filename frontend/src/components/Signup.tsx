@@ -54,9 +54,11 @@ const SignupPage = () => {
             );
 
             if (!response.ok) {
-                const errorMessage = await response.text();
+                const errorMessage = await response.json();
                 console.error("Signup error:", errorMessage);
-                return toast.error("Signup failed");
+                return toast.error("Signup failed", {
+                    description: errorMessage.message,
+                });
             }
 
             toast.success("Signup successful");
@@ -100,7 +102,7 @@ const SignupPage = () => {
                         <Separator className="flex-1" />
                     </div>
 
-                    <p className="text-center">
+                    <div className="text-center">
                         <p className="font-bold text-sm text-primary-gray">
                             ! Note !
                         </p>
@@ -109,7 +111,7 @@ const SignupPage = () => {
                             temporary accounts who is restricted feature. Google
                             authentication is better.
                         </p>
-                    </p>
+                    </div>
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div>

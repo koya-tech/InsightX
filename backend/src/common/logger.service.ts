@@ -23,7 +23,7 @@ export class CustomLoggerService implements LoggerService {
                     filename: 'logs/application.log',
                     maxsize: 5 * 1024 * 1024, // 5MB
                     maxFiles: 3,
-                    tailable: true, // 最新のログを application.log に維持
+                    tailable: true,
                 }),
             ],
         });

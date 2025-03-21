@@ -28,9 +28,11 @@ const LoginPage = () => {
             );
 
             if (!response.ok) {
-                const errorMessage = await response.text();
+                const errorMessage = await response.json();
                 console.error("Login error/Login-handleSubmit:", errorMessage);
-                return toast.error("Login failed");
+                return toast.error("Login failed", {
+                    description: errorMessage.message,
+                });
             }
 
             toast.success("Login successful");
