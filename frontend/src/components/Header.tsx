@@ -9,6 +9,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import { validateJwtToken } from "@/utils/validateJwtToken";
 
 export const Header = () => {
     const [userImageUrl, setUserImageUrl] = useState<string>("/person.svg");
@@ -61,16 +62,13 @@ export const Header = () => {
     useEffect(() => {
         async function verifyToken() {
             try {
-                const response = await fetch(
-                    import.meta.env.VITE_BACKEND_URL + "/auth/verify",
-                    {
-                        method: "POST",
-                        credentials: "include",
-                    }
-                );
-
-                if (!response.ok) {
-                    throw new Error("Token verification failed");
+                const res = await validateJwtToken();
+                if (!res) {
+                    setIsAuthLoading(false);
+                    console.error(
+                        "Token verification failed or no token found"
+                    );
+                    return;
                 }
                 setIsLogin(true);
             } catch (error) {

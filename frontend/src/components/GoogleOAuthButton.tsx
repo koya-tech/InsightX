@@ -2,11 +2,7 @@ import { supabase } from "@/utils/supabaseClient";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
-const GoogleOAuthButton = ({
-    displayText,
-}: {
-    displayText: string;
-}) => {
+const GoogleOAuthButton = ({ displayText }: { displayText: string }) => {
     const navigate = useNavigate();
 
     const handleSignInWithGoogle = async () => {
