@@ -83,6 +83,7 @@ export class AuthController {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
             (req.headers['authorization'] ? req.headers['authorization'].split(' ')[1] : null);
         if (!token) {
+            this.logger.error('Token not provided');
             throw new UnauthorizedException('Token not provided');
         }
         try {

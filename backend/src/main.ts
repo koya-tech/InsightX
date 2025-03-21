@@ -18,22 +18,6 @@ async function bootstrap() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     app.use(cookieParser());
 
-    // if (!process.env.COOKIE_KEYS) {
-    //     throw new Error('COOKIE_KEYS is not set in environment variables.');
-    // }
-
-    // app.use(
-    //     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    //     cookieSession({
-    //         name: 'session',
-    //         keys: [process.env.COOKIE_KEYS],
-    //         maxAge: 3 * 60 * 60 * 1000,
-    //         httpOnly: true,
-    //         secure: process.env.NODE_ENV === 'production',
-    //         sameSite: process.env.NODE_ENV === 'production' ? 'lax' : 'none',
-    //     }),
-    // );
-
     await app.listen(process.env.PORT ?? 3000);
 
     logger.nestLog('Nest application successfully started', 'NestApplication');
