@@ -33,4 +33,40 @@ export class UserService {
 
         return targetUser;
     }
+
+    async updateUser(id: string, username: string) {
+        const cachedUser = users.find((user) => user.id === id);
+        if (cachedUser) {
+            cachedUser.username = username;
+            this.logger.log(`User updated: ${cachedUser.username}`);
+            return;
+        }
+        const { error } = await supabase
+            .from('users')
+            .update({
+                user_name: username,
+            })
+            .eq('id', id)
+            .single();
+
+        if (error) {
+            this.logger.error(`User with id ${id} not found: ${error?.message}`);
+            throw new BadRequestException('User not found');
+        }
+    }
+
+    async deleteUser(id: string) {
+        const cachedUserIndex = users.findIndex((user) => user.id === id);
+        if (cachedUserIndex !== -1) {
+            users.splice(cachedUserIndex, 1);
+            this.logger.log(`User deleted: ${id}`);
+            return;
+        }
+        const { error } = await supabase.auth.admin.deleteUser(id);
+
+        if (error) {
+            this.logger.error(`User with id ${id} not found: ${error?.message}`);
+            throw new BadRequestException('User not found');
+        }
+    }
 }
