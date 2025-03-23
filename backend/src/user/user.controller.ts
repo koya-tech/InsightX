@@ -10,9 +10,12 @@ export class UserController {
     ) {}
 
     @Get(':id')
-    getUser(@Param('id') id: string) {
+    async getUser(@Param('id') id: string) {
         try {
-            const user = this.userService.getUser(id);
+            const user = await this.userService.getUser(id);
+            if (!user) {
+                throw new NotFoundException('User not found');
+            }
             this.logger.log(`User found: ${user.username}`);
             return user;
         } catch (error) {

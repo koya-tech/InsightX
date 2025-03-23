@@ -8,3 +8,10 @@ export class AuthDto {
     username: string;
     password: string;
 }
+
+export interface SupabaseUserSchema {
+    id: string;
+    created_at: string;
+    wallet_address: string;
+    user_name: string;
+}

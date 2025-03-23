@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
-import { Search, MessageSquare } from "lucide-react";
+import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { ChatBox } from "./ChatBox";
 import Profile from "./Profile";
 import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/utils/supabaseClient";
 import { validateJwtToken } from "@/utils/validateJwtToken";
-import { FileTheme, fileTypesFromSupavec } from "@/type";
+import { FileTheme } from "@/type";
+import Share from "./Share";
+import ThemesList from "./ThemesList";
 
 export default function Dashboard() {
     const [searchParams] = useSearchParams();
@@ -17,34 +18,6 @@ export default function Dashboard() {
     );
     const [selectedTheme, setSelectedTheme] = useState<FileTheme | null>(null);
     const [userId, setUserId] = useState<string>("");
-    const [searchThemes, setSearchThemes] = useState<FileTheme[]>([]);
-    useEffect(() => {
-        async function fetchFileList() {
-            const res = await fetch("https://api.supavec.com/user_files", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    authorization: import.meta.env.VITE_SUPAVEC_API,
-                },
-                body: JSON.stringify({
-                    pagination: { limit: 10, offset: 0 },
-                    order_dir: "desc",
-                }),
-            });
-            const data = await res.json();
-
-            if (data && data.results) {
-                const themes: FileTheme[] = data.results.map(
-                    (file: fileTypesFromSupavec) => ({
-                        title: file.file_name,
-                        fileId: file.file_id,
-                    })
-                );
-                setSearchThemes(themes);
-            }
-        }
-        fetchFileList();
-    }, []);
 
     useEffect(() => {
         async function checkSession() {
@@ -60,6 +33,7 @@ export default function Dashboard() {
                 setUserId(data.session?.user.id);
             }
         }
+
         checkSession();
     }, []);
 
@@ -79,6 +53,13 @@ export default function Dashboard() {
                     <span>Search</span>
                 </Button>
                 <Button
+                    variant={activeTab === "share" ? "secondary" : "ghost"}
+                    className="flex items-center space-x-2"
+                    onClick={() => setActiveTab("share")}
+                >
+                    <span>Share</span>
+                </Button>
+                <Button
                     variant={activeTab === "profile" ? "secondary" : "ghost"}
                     className="flex items-center space-x-2"
                     onClick={() => setActiveTab("profile")}
@@ -90,26 +71,7 @@ export default function Dashboard() {
             {/* Main Content */}
             <div className="flex-1 p-6 bg-gray-100">
                 {activeTab === "search" && !selectedTheme && (
-                    <Card>
-                        <CardContent className="p-4">
-                            <h2 className="text-lg font-semibold mb-4">
-                                Select a Theme
-                            </h2>
-                            <div className="space-y-2">
-                                {searchThemes.map((theme, index) => (
-                                    <Button
-                                        key={index}
-                                        variant="outline"
-                                        className="w-full flex items-center space-x-2"
-                                        onClick={() => setSelectedTheme(theme)}
-                                    >
-                                        <MessageSquare size={20} />
-                                        <span>{theme.title}</span>
-                                    </Button>
-                                ))}
-                            </div>
-                        </CardContent>
-                    </Card>
+                    <ThemesList setSelectedTheme={setSelectedTheme} />
                 )}
 
                 {activeTab === "search" && selectedTheme && (
@@ -118,6 +80,8 @@ export default function Dashboard() {
                         onBack={() => setSelectedTheme(null)}
                     />
                 )}
+
+                {activeTab === "share" && <Share userId={userId} />}
 
                 {activeTab === "profile" && <Profile userId={userId} />}
             </div>
