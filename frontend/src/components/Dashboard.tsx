@@ -1,19 +1,43 @@
-import { useState } from "react";
-import { Search, MessageSquare } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Search, Share2, UserRoundPen } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { ChatBox } from "./ChatBox";
-
-const searchThemes = [
-    "Climate Change",
-    "Space Exploration",
-    "Renewable Energy",
-    "Ocean Conservation",
-];
+import Profile from "./Profile";
+import { useSearchParams } from "react-router-dom";
+import { supabase } from "@/utils/supabaseClient";
+import { validateJwtToken } from "@/utils/validateJwtToken";
+import { FileTheme } from "@/type";
+import ThemesList from "./ThemesList";
+import Share from "./Share";
 
 export default function Dashboard() {
-    const [activeTab, setActiveTab] = useState("search");
-    const [selectedTheme, setSelectedTheme] = useState<string | null>(null);
+    const [searchParams] = useSearchParams();
+    const signupFlag = searchParams.get("signup");
+    const [activeTab, setActiveTab] = useState(
+        signupFlag ? "profile" : "search"
+    );
+    const [selectedTheme, setSelectedTheme] = useState<FileTheme | null>(null);
+    const [userId, setUserId] = useState<string>("");
+    const [isGoogleAuth, setIsGoogleAuth] = useState(false);
+
+    useEffect(() => {
+        async function checkSession() {
+            const { data } = await supabase.auth.getUser();
+            if (!data.user) {
+                const res = await validateJwtToken();
+                if (!res) {
+                    window.location.href = "/login";
+                } else {
+                    setUserId(res.user.id);
+                }
+            } else {
+                setIsGoogleAuth(true);
+                setUserId(data.user.id);
+            }
+        }
+
+        checkSession();
+    }, []);
 
     return (
         <div className="flex h-screen pt-16">
@@ -31,10 +55,20 @@ export default function Dashboard() {
                     <span>Search</span>
                 </Button>
                 <Button
+                    variant={activeTab === "share" ? "secondary" : "ghost"}
+                    disabled={!isGoogleAuth}
+                    className="flex items-center space-x-2"
+                    onClick={() => setActiveTab("share")}
+                >
+                    <Share2 size={20} />
+                    <span>Share</span>
+                </Button>
+                <Button
                     variant={activeTab === "profile" ? "secondary" : "ghost"}
                     className="flex items-center space-x-2"
                     onClick={() => setActiveTab("profile")}
                 >
+                    <UserRoundPen size={20} />
                     <span>Profile</span>
                 </Button>
             </div>
@@ -42,26 +76,7 @@ export default function Dashboard() {
             {/* Main Content */}
             <div className="flex-1 p-6 bg-gray-100">
                 {activeTab === "search" && !selectedTheme && (
-                    <Card>
-                        <CardContent className="p-4">
-                            <h2 className="text-lg font-semibold mb-4">
-                                Select a Theme
-                            </h2>
-                            <div className="space-y-2">
-                                {searchThemes.map((theme, index) => (
-                                    <Button
-                                        key={index}
-                                        variant="outline"
-                                        className="w-full flex items-center space-x-2"
-                                        onClick={() => setSelectedTheme(theme)}
-                                    >
-                                        <MessageSquare size={20} />
-                                        <span>{theme}</span>
-                                    </Button>
-                                ))}
-                            </div>
-                        </CardContent>
-                    </Card>
+                    <ThemesList setSelectedTheme={setSelectedTheme} />
                 )}
 
                 {activeTab === "search" && selectedTheme && (
@@ -71,13 +86,9 @@ export default function Dashboard() {
                     />
                 )}
 
-                {activeTab === "profile" && (
-                    <Card>
-                        <CardContent className="p-4">
-                            Profile Component Goes Here
-                        </CardContent>
-                    </Card>
-                )}
+                {activeTab === "share" && <Share userId={userId} />}
+
+                {activeTab === "profile" && <Profile userId={userId} />}
             </div>
         </div>
     );

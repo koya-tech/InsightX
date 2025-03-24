@@ -6,7 +6,7 @@ export const Footer = () => {
             <footer className="bg-secondary-gray py-8">
                 <div className="container mx-auto px-4">
                     <div className="text-center text-primary-gray flex justify-between">
-                        <p>© 2025 Ecology Hub.</p>
+                        <p>© 2025 InsightX.</p>
                         <div className="flex justify-center space-x-4 mt-4">
                             <a
                                 href="#"

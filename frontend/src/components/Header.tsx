@@ -9,6 +9,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import { validateJwtToken } from "@/utils/validateJwtToken";
 
 export const Header = () => {
     const [userImageUrl, setUserImageUrl] = useState<string>("/person.svg");
@@ -29,10 +30,8 @@ export const Header = () => {
     };
 
     const handleLogout = async () => {
-        const {
-            data: { session },
-        } = await supabase.auth.getSession();
-        if (session) {
+        const { data } = await supabase.auth.getUser();
+        if (data.user) {
             const { error } = await supabase.auth.signOut();
             if (error) {
                 console.error("Supabase logout error:", error.message);
@@ -61,16 +60,13 @@ export const Header = () => {
     useEffect(() => {
         async function verifyToken() {
             try {
-                const response = await fetch(
-                    import.meta.env.VITE_BACKEND_URL + "/auth/verify",
-                    {
-                        method: "POST",
-                        credentials: "include",
-                    }
-                );
-
-                if (!response.ok) {
-                    throw new Error("Token verification failed");
+                const res = await validateJwtToken();
+                if (!res) {
+                    setIsAuthLoading(false);
+                    console.error(
+                        "Token verification failed or no token found"
+                    );
+                    return;
                 }
                 setIsLogin(true);
             } catch (error) {
@@ -81,9 +77,9 @@ export const Header = () => {
         }
 
         async function fetchUser() {
-            const { data } = await supabase.auth.getSession();
-            if (data.session) {
-                setUserImageUrl(data.session.user.user_metadata.avatar_url);
+            const { data } = await supabase.auth.getUser();
+            if (data.user?.user_metadata) {
+                setUserImageUrl(data.user.user_metadata.avatar_url);
                 setIsLogin(true);
                 setIsAuthLoading(false);
             } else {
@@ -102,7 +98,7 @@ export const Header = () => {
                     <div className="flex items-center">
                         <a href="/">
                             <h1 className="text-xl font-bold text-primary-green">
-                                Ecology Hub
+                                InsightX
                             </h1>
                         </a>
                     </div>

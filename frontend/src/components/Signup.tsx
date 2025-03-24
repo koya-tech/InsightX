@@ -62,7 +62,7 @@ const SignupPage = () => {
             }
 
             toast.success("Signup successful");
-            navigate(`/dashboard`);
+            navigate(`/dashboard?signup=true`);
         } catch (error) {
             console.error("Signup error:", error);
             toast.error("Signup failed");

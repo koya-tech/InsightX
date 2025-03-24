@@ -13,9 +13,6 @@ import { AuthService } from './auth.service';
 import { CustomLoggerService } from 'src/common/logger.service';
 import { AuthDto } from 'src/type';
 
-// In-memory user store (for demo purposes only)
-export const users: Array<{ id: string; username: string; passwordHash: string }> = [];
-
 @Controller('auth')
 export class AuthController {
     constructor(
@@ -91,7 +88,7 @@ export class AuthController {
 
             return res.status(HttpStatus.OK).json({
                 message: 'Token valid',
-                username: user.username,
+                user: user,
             });
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : String(error);

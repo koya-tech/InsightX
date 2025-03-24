@@ -2,17 +2,16 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-
-type Message = {
-    text: string;
-    sender: "user" | "bot";
-};
+import { genAIModel } from "@/utils/googleGeminiModel";
+import generatePrompt from "@/utils/generatePrompt";
+import { FileTheme, Message } from "@/type";
+import { TypingText } from "./TypingText";
 
 export function ChatBox({
     theme,
     onBack,
 }: {
-    theme: string;
+    theme: FileTheme;
     onBack: () => void;
 }) {
     const [messages, setMessages] = useState<Message[]>([]);
@@ -28,18 +27,33 @@ export function ChatBox({
         setLoading(true);
 
         try {
-            const response = await fetch(
-                "https://your-rag-backend.com/api/chat",
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ theme, message: input }),
-                }
-            );
+            const response = await fetch("https://api.supavec.com/search", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    authorization: import.meta.env.VITE_SUPAVEC_API,
+                },
+                body: JSON.stringify({
+                    query: userMessage.text,
+                    file_ids: [theme.fileId],
+                }),
+            });
             const data = await response.json();
+
+            const documentFromSupavec = data.documents[0].content;
+
+            const prompt = generatePrompt({
+                Question: userMessage.text,
+                RelevantDocument: documentFromSupavec,
+            });
+
+            const result = await genAIModel.generateContent(prompt);
+            const responseFromResult = await result.response;
+            const generatedResponse: string = await responseFromResult.text();
+
             setMessages((prev) => [
                 ...prev,
-                { text: data.reply, sender: "bot" },
+                { text: generatedResponse, sender: "bot" },
             ]);
         } catch (error) {
             console.error("Error fetching response:", error);
@@ -60,11 +74,29 @@ export function ChatBox({
                         ← Back
                     </Button>
                     <h2 className="text-lg font-semibold">
-                        Chat about {theme}
+                        Chat about {theme.title}
                     </h2>
                 </div>
                 <div className="h-full overflow-y-auto border p-2 mb-2 bg-white rounded">
                     {messages.map((msg, index) => (
+                        // <div
+                        //     key={index}
+                        //     className={`mb-2 ${
+                        //         msg.sender === "user"
+                        //             ? "text-right"
+                        //             : "text-left"
+                        //     }`}
+                        // >
+                        //     <span
+                        //         className={`inline-block p-2 rounded-lg ${
+                        //             msg.sender === "user"
+                        //                 ? "bg-secondary-green"
+                        //                 : "bg-gray-200"
+                        //         }`}
+                        //     >
+                        //         {msg.text}
+                        //     </span>
+                        // </div>
                         <div
                             key={index}
                             className={`mb-2 ${
@@ -80,7 +112,11 @@ export function ChatBox({
                                         : "bg-gray-200"
                                 }`}
                             >
-                                {msg.text}
+                                {msg.sender === "bot" ? (
+                                    <TypingText text={msg.text} />
+                                ) : (
+                                    msg.text
+                                )}
                             </span>
                         </div>
                     ))}
