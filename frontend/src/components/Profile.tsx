@@ -21,12 +21,12 @@ const Profile = ({ userId }: { userId: string }) => {
                     "Content-Type": "application/json",
                 },
                 credentials: "include",
+                body: JSON.stringify({ username }),
             }
         );
         if (res.ok) {
             setIsSettingUsername(false);
         }
-        return;
     };
 
     const deleteUserInfo = async () => {
@@ -43,7 +43,6 @@ const Profile = ({ userId }: { userId: string }) => {
         if (res.ok) {
             window.location.href = "/login";
         }
-        return;
     };
 
     useEffect(() => {
@@ -68,58 +67,71 @@ const Profile = ({ userId }: { userId: string }) => {
     }, [userId]);
 
     return (
-        <div>
+        <div className="space-y-6">
             <h2 className="text-lg font-semibold mb-4">Profile</h2>
-            <div className="mb-4">
-                <label className="block text-primary-gray font-bold">
+
+            {/* Username Section */}
+            <div className="p-4 bg-white rounded-lg shadow">
+                <label className="block text-sm font-bold text-primary-gray mb-2">
                     Username
                 </label>
-                <div>
+                <div className="flex items-center">
                     {isSettingUserName ? (
                         <Input
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             placeholder="Enter your username"
+                            className="flex-grow border border-gray-300 rounded-md p-2"
                         />
                     ) : (
-                        <p>{username}</p>
+                        <p className="flex-grow text-lg text-gray-800">
+                            {username}
+                        </p>
                     )}
-                    <Button
-                        variant="ghost"
-                        onClick={async () => {
-                            setIsSettingUsername(!isSettingUserName);
-                            // updateUserInfo();
-                            if (isSettingUserName) {
-                                await updateUserInfo();
-                            }
-                        }}
-                    >
-                        {isSettingUserName ? "Save" : "Edit"}
-                    </Button>
-                    <Button
-                        variant="ghost"
-                        onClick={() => {
-                            deleteUserInfo();
-                        }}
-                    >
-                        Delete
-                    </Button>
+                    <div className="flex space-x-2 ml-4">
+                        <Button
+                            variant="ghost"
+                            onClick={async () => {
+                                setIsSettingUsername(!isSettingUserName);
+                                if (isSettingUserName) {
+                                    await updateUserInfo();
+                                }
+                            }}
+                        >
+                            {isSettingUserName ? "Save" : "Edit"}
+                        </Button>
+                        <Button
+                            variant="ghost"
+                            onClick={() => {
+                                deleteUserInfo();
+                            }}
+                        >
+                            Delete
+                        </Button>
+                    </div>
                 </div>
             </div>
-            <div className="hidden">
-                <div className="mb-4">
-                    <label className="block text-primary-gray font-bold">
-                        Wallet Address:
-                    </label>
+
+            {/* Wallet Address Section */}
+            <div className="p-4 bg-white rounded-lg shadow">
+                <label className="block text-sm font-bold text-primary-gray mb-2">
+                    Wallet Address
+                </label>
+                <div className="flex items-center">
                     <Input
                         value={walletAddress}
                         onChange={(e) => setWalletAddress(e.target.value)}
                         placeholder="Enter your wallet address"
+                        className="flex-grow border border-gray-300 rounded-md p-2"
                     />
+                    <Button
+                        onClick={saveWalletAddress}
+                        variant="default"
+                        className="ml-4"
+                    >
+                        Save
+                    </Button>
                 </div>
-                <Button onClick={saveWalletAddress} variant="default">
-                    Save
-                </Button>
             </div>
         </div>
     );

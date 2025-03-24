@@ -3,6 +3,7 @@ import { CustomLoggerService } from 'src/common/logger.service';
 import { User, SupabaseUserSchema } from 'src/type';
 import { users } from 'src/utils/contant';
 import { supabase } from 'src/utils/supabaseClient';
+import { supabaseServiceRole } from 'src/utils/supabaseServiceRoleClient';
 
 @Injectable()
 export class UserService {
@@ -62,7 +63,7 @@ export class UserService {
             this.logger.log(`User deleted: ${id}`);
             return;
         }
-        const { error } = await supabase.auth.admin.deleteUser(id);
+        const { error } = await supabaseServiceRole.auth.admin.deleteUser(id);
 
         if (error) {
             this.logger.error(`User with id ${id} not found: ${error?.message}`);

@@ -30,10 +30,8 @@ export const Header = () => {
     };
 
     const handleLogout = async () => {
-        const {
-            data: { session },
-        } = await supabase.auth.getSession();
-        if (session) {
+        const { data } = await supabase.auth.getUser();
+        if (data.user) {
             const { error } = await supabase.auth.signOut();
             if (error) {
                 console.error("Supabase logout error:", error.message);
@@ -79,9 +77,9 @@ export const Header = () => {
         }
 
         async function fetchUser() {
-            const { data } = await supabase.auth.getSession();
-            if (data.session) {
-                setUserImageUrl(data.session.user.user_metadata.avatar_url);
+            const { data } = await supabase.auth.getUser();
+            if (data.user?.user_metadata) {
+                setUserImageUrl(data.user.user_metadata.avatar_url);
                 setIsLogin(true);
                 setIsAuthLoading(false);
             } else {
@@ -100,7 +98,7 @@ export const Header = () => {
                     <div className="flex items-center">
                         <a href="/">
                             <h1 className="text-xl font-bold text-primary-green">
-                                Ecology Hub
+                                InsightX
                             </h1>
                         </a>
                     </div>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Search } from "lucide-react";
+import { Search, Share2, UserRoundPen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ChatBox } from "./ChatBox";
 import Profile from "./Profile";
@@ -7,8 +7,8 @@ import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/utils/supabaseClient";
 import { validateJwtToken } from "@/utils/validateJwtToken";
 import { FileTheme } from "@/type";
-import Share from "./Share";
 import ThemesList from "./ThemesList";
+import Share from "./Share";
 
 export default function Dashboard() {
     const [searchParams] = useSearchParams();
@@ -18,11 +18,12 @@ export default function Dashboard() {
     );
     const [selectedTheme, setSelectedTheme] = useState<FileTheme | null>(null);
     const [userId, setUserId] = useState<string>("");
+    const [isGoogleAuth, setIsGoogleAuth] = useState(false);
 
     useEffect(() => {
         async function checkSession() {
-            const { data } = await supabase.auth.getSession();
-            if (!data.session?.user.id) {
+            const { data } = await supabase.auth.getUser();
+            if (!data.user) {
                 const res = await validateJwtToken();
                 if (!res) {
                     window.location.href = "/login";
@@ -30,7 +31,8 @@ export default function Dashboard() {
                     setUserId(res.user.id);
                 }
             } else {
-                setUserId(data.session?.user.id);
+                setIsGoogleAuth(true);
+                setUserId(data.user.id);
             }
         }
 
@@ -54,9 +56,11 @@ export default function Dashboard() {
                 </Button>
                 <Button
                     variant={activeTab === "share" ? "secondary" : "ghost"}
+                    disabled={!isGoogleAuth}
                     className="flex items-center space-x-2"
                     onClick={() => setActiveTab("share")}
                 >
+                    <Share2 size={20} />
                     <span>Share</span>
                 </Button>
                 <Button
@@ -64,6 +68,7 @@ export default function Dashboard() {
                     className="flex items-center space-x-2"
                     onClick={() => setActiveTab("profile")}
                 >
+                    <UserRoundPen size={20} />
                     <span>Profile</span>
                 </Button>
             </div>
