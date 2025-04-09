@@ -3,6 +3,10 @@
 **InsightX** is a web application designed to **share academic papers** and **enhance understanding through Generative AI**.  
 By combining Retrieval-Augmented Generation (RAG) with Google's **Gemini**, InsightX allows users to explore academic content via an interactive chat interface.
 
+[Demo Movie](https://drive.google.com/file/d/1XqNRzXSk_nuSfhTVLLsp0Pv0gqpbiGNr/view?usp=sharing)
+
+<img src="https://github.com/user-attachments/assets/165f1eb5-8e66-4f70-a58d-a15721c9a423" width="300" alt="Description of image">
+
 ---
 
 ## 🚀 Features
